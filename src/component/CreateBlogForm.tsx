@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useCreateBlog } from "@/hooks/useBlogs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -6,24 +7,53 @@ import { Button } from "@/components/ui/button"
 export const CreateBlogForm = () => {
   const { mutate, isPending } = useCreateBlog()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [content, setContent] = useState("")
+
+  const submitHandler = (e: React.FormEvent) => {
     e.preventDefault()
+
     mutate({
-      title: "New Blog",
-      category: ["FINANCE"],
-      description: "Short description",
-      date: new Date().toISOString(),
+      title,
+      description,
+      content,
+      category: ["TECH"],
       coverImage: "",
-      content: "Blog content",
+      date: new Date().toISOString(),
     })
+
+    // clear form
+    setTitle("")
+    setDescription("")
+    setContent("")
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input placeholder="Title" />
-      <Textarea placeholder="Description" />
+    <form onSubmit={submitHandler} className="space-y-3">
+      <Input
+        placeholder="Blog title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
+
+      <Textarea
+        placeholder="Short description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+
+      <Textarea
+        placeholder="Blog content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        required
+      />
+
       <Button type="submit" disabled={isPending}>
-        Create Blog
+        {isPending ? "Adding..." : "Add Blog"}
       </Button>
     </form>
   )
